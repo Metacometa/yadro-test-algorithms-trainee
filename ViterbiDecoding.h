@@ -37,7 +37,7 @@ public:
 
 		trellisDiagram.resize(code.size(), std::vector<TrellisNode>(TRELLIS_ROWS));
 
-		hammingDistance("ab", "a");
+		hammingDistance("aa", "aa");
 
 
 		for (int i = 0; i < trellisDiagram.size(); ++i) {
@@ -52,6 +52,15 @@ public:
 		if (a.length() != b.length()) {
 			throw INCORRECT_HAMMING_INPUT_CODE;
 		}
+
+		int errors = 0;
+		for (int i = 0; i < a.length(); ++i) {
+			if (a[i] != b[i]) {
+				errors++;
+			}
+		}
+
+		return errors;
 	}
 };
 
