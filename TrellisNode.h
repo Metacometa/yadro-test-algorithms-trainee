@@ -6,7 +6,9 @@ struct TrellisNode
 {
 	int INF = 10000;
 	int errors = INF;
-	std::string parent;
+	int parent = -1;
+	std::string rule;
+	int bit = -1;
 
 };
 
