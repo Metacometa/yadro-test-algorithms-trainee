@@ -3,16 +3,20 @@
 #include <string>
 #include <iostream>
 #include "TrellisNode.h"
+#include <set>
 
 class ViterbiDecoding
 {
 	static const int TRELLIS_ROWS = 4;
 	static const int INCORRECT_CODE_SIZE_CODE = 0;
 	static const int INCORRECT_HAMMING_INPUT_CODE = 1;
-	std::unordered_map<int, std::vector<int>> Trellis{ {0, {0, 2}}, {1, {0, 2}}, {2, {1, 3}}, {3, {1, 3}} };
-	std::unordered_map<std::string, int> trellisBijection{ {"00", 0}, {"01", 1}, {"10", 2}, {"11", 3} };
+	std::unordered_map<int, std::vector<int>> branches{ {0, {0, 2}}, {1, {0, 2}}, {2, {1, 3}}, {3, {1, 3}} };
+	std::unordered_map<std::string, int> trellisBijectionToInt{ {"00", 0}, {"01", 1}, {"10", 2}, {"11", 3} };
+	std::unordered_map<int, std::string> trellisBijectionToSymbol{ {0, "00"}, {1, "01"}, {2, "10"}, {3, "11"}};
 
-	std::vector<std::vector<TrellisNode>> trellisDiagram;
+	std::vector<std::vector<TrellisNode>> states;
+
+	std::set<int> includedStates{ 0 };
 public:
 	ViterbiDecoding(const std::vector<bool>&code) {
 		try {
@@ -30,23 +34,47 @@ public:
 		}
 	}
 
-	void buildTrellisDiagram(const std::vector<bool>& code) {
-		if (code.size() == 0 or code.size() % 2 == 1) {
+	void buildTrellisDiagram(const std::vector<bool>& encoded) {
+		if (encoded.size() == 0 or encoded.size() % 2 == 1) {
 			throw INCORRECT_CODE_SIZE_CODE;
 		}
 
-		trellisDiagram.resize(code.size(), std::vector<TrellisNode>(TRELLIS_ROWS));
+		states.resize(encoded.size() / 2 + 1, std::vector<TrellisNode>(TRELLIS_ROWS));
+		states[0][0].errors = 0;
+		calculateErrorsForPaths(encoded);
 
-		hammingDistance("aa", "aa");
-
-
-		for (int i = 0; i < trellisDiagram.size(); ++i) {
-			for (int j = 0; j < trellisDiagram[i].size(); ++j) {
-				std::cout << trellisDiagram[i][j].error << " ";
+		for (auto& i : states) {
+			for (auto& j : i) {
+				std::cout << j.errors << " ";
 			}
 			std::cout << std::endl;
-		}	
+		}
+
 	}
+
+	void calculateErrorsForPaths(const std::vector<bool>& encoded) {
+		std::string code = "";
+		for (int i = 0; i < encoded.size(); ++i) {
+			code += encoded[i] + 48;
+
+			if (i % 2 == 1) {
+				for (auto& state : includedStates) {
+					for (auto& connected : branches[state]) {
+						int errors = hammingDistance(code, trellisBijectionToSymbol[connected]);
+
+						if (states[i / 2][state].errors + errors < states[i / 2 + 1][connected].errors) {
+							states[i / 2 + 1][connected].errors = states[i / 2][state].errors + errors;
+							states[i / 2 + 1][connected].parent = trellisBijectionToSymbol[state];
+						}
+						includedStates.insert(connected);
+					}
+				}
+				code = "";
+			}
+
+		}
+	}
+
 
 	int hammingDistance(const std::string &a, const std::string&b) {
 		if (a.length() != b.length()) {

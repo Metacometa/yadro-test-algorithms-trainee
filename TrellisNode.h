@@ -4,8 +4,9 @@
 
 struct TrellisNode
 {
-	int error = 0;
-	std::vector<std::string> parent;
+	int INF = 10000;
+	int errors = INF;
+	std::string parent;
 
 };
 
