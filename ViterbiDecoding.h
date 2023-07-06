@@ -11,34 +11,50 @@ class ViterbiDecoding
 	static const int INCORRECT_CODE_SIZE_CODE = 0;
 	static const int INCORRECT_HAMMING_INPUT_CODE = 1;
 	static const int INCORRECT_RULE = 2;
+	static const int INCORRECT_MIN_STATE = 3;
+	static const int SHIFT_FROM_INT_TO_SYMBOL = 48;
 	std::unordered_map<int, std::vector<int>> branches{ {0, {0, 2}}, {1, {0, 2}}, {2, {1, 3}}, {3, {1, 3}} };
-	std::unordered_map<std::string, int> trellisBijectionToInt{ {"00", 0}, {"01", 1}, {"10", 2}, {"11", 3} };
 	std::unordered_map<int, std::string> trellisBijectionToSymbol{ {0, "00"}, {1, "01"}, {2, "10"}, {3, "11"}};
 
 	std::unordered_map<int, std::vector<std::string>> rules{ {0, {"00", "11"}}, {1, {"11", "00"}}, {2, {"10", "01"}}, {3, {"01", "10"}} };
 
-
 	std::vector<std::vector<TrellisNode>> states;
 
 	std::set<int> includedStates{ 0 };
-public:
-	ViterbiDecoding(const std::vector<bool>&code) {
-		try {
-			buildTrellisDiagram(code);
-		}
-		catch(int i) { 
-			switch (i) {
-			case INCORRECT_CODE_SIZE_CODE:
-				std::cout << "Incorrect code size" << std::endl;
-				break;
-			case INCORRECT_HAMMING_INPUT_CODE:
-				std::cout << "Words have different lengths in hamming distance" << std::endl;
-				break;
-			case INCORRECT_RULE:
-				std::cout << "Incorrect rule" << std::endl;
-				break;
+
+	int findMinState(const std::vector<TrellisNode>& trellisColumn) {
+		int minErrors = 10000;
+		int minState = -1;
+
+		for (int i = 0; i < trellisColumn.size(); ++i) {
+			if (trellisColumn[i].errors < minErrors) {
+				minErrors = trellisColumn[i].errors;
+				minState = i;
 			}
 		}
+
+		if (minState == -1) {
+			throw INCORRECT_MIN_STATE;
+		}
+
+		return minState;
+	}
+
+	std::string traceBackPath(const int& state) {
+		int currentState = state;
+		std::string path;
+		for (int i = states.size() - 1; i > 0; --i) {
+			path += states[i][currentState].bit + SHIFT_FROM_INT_TO_SYMBOL;
+			currentState = states[i][currentState].parent;
+		}
+
+		reverse(path.begin(), path.end());
+		return path;
+	}
+
+	std::string traceBackLowestErrorPath() {
+		int minState = findMinState(states[states.size() - 1]);
+		return traceBackPath(minState);
 	}
 
 	void buildTrellisDiagram(const std::vector<bool>& encoded) {
@@ -49,46 +65,16 @@ public:
 		states.resize(encoded.size() / 2 + 1, std::vector<TrellisNode>(TRELLIS_ROWS));
 		states[0][0].errors = 0;
 		calculateErrorsForPaths(encoded);
-
-		for (auto& i : states) {
-			for (auto& j : i) {
-				std::cout << j.errors << " ";
-			}
-			std::cout << std::endl;
-		}
-
-		int minErrors = 10000;
-		int minState = -1;
-		for (int i = 0; i < states.back().size(); ++i) {
-			if (states.back()[i].errors < minErrors) {
-				minErrors = states.back()[i].errors;
-				minState = i;
-			}
-		}
-
-		std::vector<int> path;
-		int currentState = minState;
-		for (int i = states.size() - 1; i > 0; --i) {
-			path.push_back(states[i][currentState].bit);
-			currentState = states[i][currentState].parent;
-		}
-		reverse(path.begin(), path.end());
-		for (auto& i : path) {
-			std::cout << i << " ";
-		}
-
-
 	}
 
 	void calculateErrorsForPaths(const std::vector<bool>& encoded) {
 		std::string code = "";
 		for (int i = 0; i < encoded.size(); ++i) {
-			code += encoded[i] + 48;
+			code += encoded[i] + SHIFT_FROM_INT_TO_SYMBOL;
 			std::vector<int> newStates;
 			if (i % 2 == 1) {
 				for (auto& state : includedStates) {
 					for (int numberOfRule = 0; numberOfRule < rules[state].size(); ++numberOfRule) {
-						//std::cout << state << " " << code << " " << rule << std::endl;
 						int errors = hammingDistance(code, rules[state][numberOfRule]);
 						int next = nextNodeByRule(trellisBijectionToSymbol[state], rules[state][numberOfRule]);
 
@@ -101,7 +87,6 @@ public:
 
 						newStates.push_back(next);
 					}
-
 				}
 
 				for (auto& j : newStates) {
@@ -113,7 +98,7 @@ public:
 		}
 	}
 
-	int nextNodeByRule(const std::string& node, const std::string&rule) {
+	int nextNodeByRule(const std::string& node, const std::string& rule) {
 		if (node == "00" and rule == "00") {
 			return 0;
 		}
@@ -146,7 +131,7 @@ public:
 		throw INCORRECT_RULE;
 	}
 
-	int hammingDistance(const std::string &a, const std::string&b) {
+	int hammingDistance(const std::string& a, const std::string& b) {
 		if (a.length() != b.length()) {
 			throw INCORRECT_HAMMING_INPUT_CODE;
 		}
@@ -159,6 +144,57 @@ public:
 		}
 
 		return errors;
+	}
+
+public:
+	ViterbiDecoding() {}
+
+	std::string decode(const std::string& encoded) {
+		std::vector<bool> encodedInBool;
+
+		for (auto& symbol : encoded) {
+			if (symbol == '0') {
+				encodedInBool.emplace_back(false);
+			}
+			else if (symbol == '1') {
+				encodedInBool.emplace_back(true);
+			}
+		}
+
+		return decode(encodedInBool);
+	}
+
+
+	std::string decode(const std::vector<bool>& encoded) {
+		try {
+			buildTrellisDiagram(encoded);
+
+			return traceBackLowestErrorPath();
+		}
+		catch (int i) {
+			switch (i) {
+			case INCORRECT_CODE_SIZE_CODE:
+				std::cout << "Incorrect code size" << std::endl;
+				break;
+			case INCORRECT_HAMMING_INPUT_CODE:
+				std::cout << "Words have different lengths in hamming distance" << std::endl;
+				break;
+			case INCORRECT_RULE:
+				std::cout << "Incorrect rule" << std::endl;
+				break;
+			case INCORRECT_MIN_STATE:
+				std::cout << "Incorrect min state" << std::endl;
+				break;
+			}
+		}
+	}
+
+	//utils
+	static void printPath(const std::string& path) {
+		for (auto& i : path) {
+			std::cout << i;
+		}
+		std::cout << std::endl;
 	}
 };
 
