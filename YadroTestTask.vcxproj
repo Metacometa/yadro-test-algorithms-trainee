@@ -144,6 +144,8 @@
     <ClCompile Include="ViterbiDecoding.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Coder.h" />
+    <ClInclude Include="ConvolutionalCoding.h" />
     <ClInclude Include="TrellisNode.h" />
     <ClInclude Include="ViterbiDecoding.h" />
   </ItemGroup>
