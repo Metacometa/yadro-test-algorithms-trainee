@@ -23,5 +23,9 @@ public:
 	bool isEmpty() {
 		return !(c or b or a);
 	}
+
+	void print() {
+		std::cout << a << b << c << std::endl;
+	}
 };
 
