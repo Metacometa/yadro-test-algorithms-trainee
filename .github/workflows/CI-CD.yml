@@ -8,11 +8,12 @@ jobs:
  build_windows:
       name: Build for windows
       runs-on: windows-latest
+      
+      defaults:
+        run:
+          shell: bash
           
       steps:
-      - name: Setup mingw
-        uses: egor-tensin/setup-mingw@v2
-        
       - uses: actions/checkout@v3
       - name: Cl building
         run: 
