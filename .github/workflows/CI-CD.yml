@@ -1,0 +1,26 @@
+name: CI-CD
+
+on:
+  push:
+    branches: ["main", "master"]
+    
+jobs:
+ build_windows:
+      name: Build for windows
+      runs-on: windows-latest
+          
+      steps:
+      - uses: actions/checkout@v3
+      - uses: egor-tensin/setup-gcc@v1
+      - name: Cl building
+        run: 
+          g++ src/main.cpp src/ConvolutionalCoding.cpp src/BinarySymmetricChannel.cpp src/ViterbiDecoding.cpp -o viterbi -I include
+    
+      - name: Upload a Build Artifact
+        uses: actions/upload-artifact@v3.1.2
+        with:
+         name: main_matrix
+         path: main_windows-latest.exe
+         retention-days: 4    
+         
+
