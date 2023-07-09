@@ -16,13 +16,13 @@ jobs:
       - uses: actions/checkout@v3
       - name: Cl building
         run: 
-          g++ src/main.cpp src/ConvolutionalCoding.cpp src/BinarySymmetricChannel.cpp src/ViterbiDecoding.cpp -o viterbi -I include
+          g++ src/main.cpp src/ConvolutionalCoding.cpp src/BinarySymmetricChannel.cpp src/ViterbiDecoding.cpp -o viterbi_windows.exe -I include
     
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v3.1.2
         with:
          name: main_matrix
-         path: main_windows-latest.exe
+         path: viterbi_windows.exe
          retention-days: 4    
          
 
