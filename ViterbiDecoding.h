@@ -32,7 +32,7 @@ class ViterbiDecoding
 	//utils
 	int findMinState(const std::vector<TrellisNode>& trellisColumn);
 	int nextNodeByRule(const std::string& node, const std::string& rule);
-	int hammingDistance(const std::string& a, const std::string& b);
+	size_t hammingDistance(const std::string& a, const std::string& b);
 
 public:
 	std::string decode(const std::string& encoded);

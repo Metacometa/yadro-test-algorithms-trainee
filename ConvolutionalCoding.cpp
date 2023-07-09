@@ -18,7 +18,7 @@ std::string ConvolutionalCoding::encode(const std::vector<bool>& message) {
 		encoded += '-';
 	}
 
-	for (int i = 0; i < Variables::CONSTRAINT; ++i) {
+	for (size_t i = 0; i < Variables::CONSTRAINT; ++i) {
 		encode.push(false);
 		encoded += encode.getX() + Variables::SHIFT_FROM_INT_TO_SYMBOL;
 		encoded += encode.getY() + Variables::SHIFT_FROM_INT_TO_SYMBOL;

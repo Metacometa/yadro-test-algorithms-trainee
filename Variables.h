@@ -13,7 +13,14 @@ namespace Variables {
 	static const int SHIFT_FROM_INT_TO_SYMBOL = 48;
 	static const int CONSTRAINT = 3;
 
-	static const int INF = 100000;
+	static const size_t INF = 100000;
+
+	//for measurement
+	static const size_t repeatsOfMeasurement = 10;
+	static const size_t lengthOfMessage = 100;
+	static const double probabilityStep = 0.02;
+	static const double startProbability = 0.0;
+	static const double endProbability = 1.0;
 }
 
 

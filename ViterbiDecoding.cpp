@@ -1,10 +1,10 @@
 #include "ViterbiDecoding.h"
 
 int ViterbiDecoding::findMinState(const std::vector<TrellisNode>& trellisColumn) {
-	int minErrors = Variables::INF;
+	size_t minErrors = Variables::INF;
 	int minState = -1;
 
-	for (int i = 0; i < trellisColumn.size(); ++i) {
+	for (size_t i = 0; i < trellisColumn.size(); ++i) {
 		if (trellisColumn[i].errors < minErrors) {
 			minErrors = trellisColumn[i].errors;
 			minState = i;
@@ -47,12 +47,13 @@ void ViterbiDecoding::buildTrellisDiagram(const std::vector<bool>& encoded) {
 
 void ViterbiDecoding::calculateErrorsForPaths(const std::vector<bool>& encoded) {
 	std::string code = "";
-	for (int i = 0; i < encoded.size(); ++i) {
+	for (size_t i = 0; i < encoded.size(); ++i) {
 		code += encoded[i] + Variables::SHIFT_FROM_INT_TO_SYMBOL;
 		std::vector<int> newStates;
+
 		if (i % 2 == 1) {
 			for (auto& state : includedStates) {
-				for (int numberOfRule = 0; numberOfRule < rules[state].size(); ++numberOfRule) {
+				for (size_t numberOfRule = 0; numberOfRule < rules[state].size(); ++numberOfRule) {
 					int errors = hammingDistance(code, rules[state][numberOfRule]);
 					int next = nextNodeByRule(trellisBijectionToSymbol[state], rules[state][numberOfRule]);
 
@@ -109,13 +110,13 @@ int ViterbiDecoding::nextNodeByRule(const std::string& node, const std::string& 
 	throw Variables::INCORRECT_RULE;
 }
 
-int ViterbiDecoding::hammingDistance(const std::string& a, const std::string& b) {
+size_t ViterbiDecoding::hammingDistance(const std::string& a, const std::string& b) {
 	if (a.length() != b.length()) {
 		throw Variables::INCORRECT_HAMMING_INPUT_CODE;
 	}
 
-	int errors = 0;
-	for (int i = 0; i < a.length(); ++i) {
+	size_t errors = 0;
+	for (size_t i = 0; i < a.length(); ++i) {
 		if (a[i] != b[i]) {
 			errors++;
 		}

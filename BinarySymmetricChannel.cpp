@@ -51,15 +51,6 @@ std::string BinarySymmetricChannel::passMessageByChannel(const std::string& mess
 		return "";
 	}
 
-	std::cout << message << std::endl;
-	std::cout << encoded_message << std::endl;
-	std::cout << transmitted_message << std::endl;
-	std::cout << decoder.decode(transmitted_message);
-
-	std::cout << "\nMust be: " << decoder.decode(encoded_message);
-	std::cout << std::endl;
-
-	std::cout << "Before returning: " << decoder.decode(transmitted_message) << std::endl;
 	return decoder.decode(transmitted_message);
 }
 
@@ -69,8 +60,8 @@ int BinarySymmetricChannel::countErrors(const std::string& input_message, const 
 		throw Variables::INCORRECT_MESSAGES_LENGTHS;
 	}
 
-	int errors = 0;
-	for (int i = 0; i < input_message.length(); ++i) {
+	size_t errors = 0;
+	for (size_t i = 0; i < input_message.length(); ++i) {
 		if (input_message[i] != output_message[i]) {
 			errors++;
 		}
