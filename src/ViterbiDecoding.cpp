@@ -1,4 +1,5 @@
 #include "ViterbiDecoding.h"
+#include <algorithm>
 
 int ViterbiDecoding::findMinState(const std::vector<TrellisNode>& trellisColumn) {
 	size_t minErrors = Variables::INF;
@@ -26,7 +27,7 @@ std::string ViterbiDecoding::traceBackPath(const int& state) {
 		currentState = states[i][currentState].parent;
 	}
 
-	reverse(path.begin(), path.end());
+	std::reverse(path.begin(), path.end());
 	return path.substr(0, path.size() - Variables::CONSTRAINT);
 }
 
@@ -164,9 +165,10 @@ std::string ViterbiDecoding::decode(const std::vector<bool>& encoded) {
 			break;
 		}
 	}
+	return "";
 }
 
-void ViterbiDecoding::printPath(const std::string& path) {
+void ViterbiDecoding::printDecoded(const std::string& path) {
 	for (auto& i : path) {
 		std::cout << i;
 	}

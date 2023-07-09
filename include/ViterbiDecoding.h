@@ -39,6 +39,6 @@ public:
 
 	std::string decode(const std::vector<bool>& encoded);
 
-	static void printPath(const std::string& path);
+	static void printDecoded(const std::string& path);
 };
 
