@@ -21,6 +21,7 @@ jobs:
           ./viterbi_test
 
   build_app:
+    needs: [test_app]
     name: Build app for all os
 
     strategy:

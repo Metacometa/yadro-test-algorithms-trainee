@@ -9,7 +9,20 @@ env:
   APP_NAME: viterbi    
 
 jobs:
+  test_app:
+    name: Test app
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Build app
+        run: |
+          g++ -std=c++17 src/viterbi_test.cpp src/ConvolutionalCoding.cpp src/ViterbiDecoding.cpp -o viterbi_test -I include
+          ./viterbi_test
+
   build_app:
+    needs: [test_app]
     name: Build app for all os
 
     strategy:
