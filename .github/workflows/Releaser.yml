@@ -3,8 +3,6 @@ name: Releaser
 on:
   push:
     branches: ["master"]
-    tags:
-    - "*"
     
 env:
   APP_NAME: viterbi    
