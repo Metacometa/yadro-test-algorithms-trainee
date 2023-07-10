@@ -34,7 +34,7 @@ jobs:
           echo ${{github.ref_name}}
           echo " !! "
           echo ${{github.head_ref}}
-          echo "$GITHUB_BASE_REF $GITHUB_REF_NAME $GITHUB_HEAD_REF"
+          echo "$GITHUB_BASE_REF && $GITHUB_REF_NAME && $GITHUB_HEAD_REF"
 
       - name: Exit if not master branch
         if: endsWith(${{env.BRANCH_NAME}}, 'master') == false
