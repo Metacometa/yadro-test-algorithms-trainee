@@ -7,7 +7,7 @@ on:
     
 env:
   APP_NAME: viterbi    
-  BRANCH_NAME: ${{ env.github.head_ref || env.github.ref_name }} 
+  BRANCH_NAME: ${{ github.head_ref || github.ref_name }} 
 
 
 jobs:
@@ -31,7 +31,7 @@ jobs:
           echo " !! "
           echo ${{env.github.base_ref}}
           echo " !! "
-          echo ${{env.GITHUB_REF_NAME}}
+          echo $env:GITHUB_REF_NAME
 
       - name: Exit if not master branch
         if: endsWith(${{env.BRANCH_NAME}}, 'master') == false
