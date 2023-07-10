@@ -18,7 +18,7 @@ jobs:
       - name: Build app
         run: |
           g++ -std=c++17 src/viterbi_test.cpp src/ConvolutionalCoding.cpp src/ViterbiDecoding.cpp -o viterbi_test -I include
-          .\ viterbi_test
+          .\viterbi_test
 
   build_app:
     name: Build app for all os
