@@ -4,26 +4,31 @@ on:
   push:
     branches: ["main", "master"]
     
-jobs:
- build_windows:
-      name: Build for windows
-      runs-on: windows-latest
+jobs:     
+  build_linux_and_macos:
+    name: Build for all os
+    
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+
+    defaults:
+      run:
+        shell: bash
+
+    env:
+      APP_NAME: viterbi
       
-      defaults:
-        run:
-          shell: bash
-          
-      steps:
+    steps:
       - uses: actions/checkout@v3
-      - name: Cl building
+      - name: Bulding of app 
         run: 
-          g++ src/main.cpp src/ConvolutionalCoding.cpp src/BinarySymmetricChannel.cpp src/ViterbiDecoding.cpp -o viterbi_windows.exe -I include
+          g++ src/main.cpp src/ConvolutionalCoding.cpp src/BinarySymmetricChannel.cpp src/ViterbiDecoding.cpp -o APP_NAME_${{matrix.os}} -I include
     
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v3.1.2
         with:
-         name: main_matrix
-         path: viterbi_windows.exe
+         name: APP_NAME_matrix
+         path: APP_NAME_${{matrix.os}}.exe
          retention-days: 4    
-         
-
