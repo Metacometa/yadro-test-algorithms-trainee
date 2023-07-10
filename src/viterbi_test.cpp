@@ -24,7 +24,7 @@ int main() {
         custom_assert(correct_output_1, coder.encode(input_1));
     }
     catch (int i) {
-        std::cerr << correct_output_1 << " != " << coder.encode(input_1) << std::endl;
+        std::cerr << "Mistake in tests:" << correct_output_1 << " != " << coder.encode(input_1) << std::endl;
         abort();
     }  
 
@@ -36,15 +36,7 @@ int main() {
         custom_assert(correct_output_2, decoder.decode(input_2));
     }
     catch (int i) {
-        std::cerr << correct_output_2 << " != " << decoder.decode(input_2) << std::endl;
-        abort();
-    }
-
-    try {
-        custom_assert("111", decoder.decode(input_2));
-    }
-    catch (int i) {
-        std::cerr << correct_output_2 << " != " << decoder.decode(input_2) << std::endl;
+        std::cerr << "Mistake in tests:" << correct_output_2 << " != " << decoder.decode(input_2) << std::endl;
         abort();
     }
     
