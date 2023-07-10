@@ -24,7 +24,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Exit if not master branch
-        if: endsWith(github.ref, 'master') == false
+        if: endsWith(github.event.base_ref, 'master') == false
         run: exit -1
       
       - name: Bulding of app 
@@ -57,4 +57,5 @@ jobs:
         with:
           artifacts: "$APP_NAME_matrix"
     
+  
 
