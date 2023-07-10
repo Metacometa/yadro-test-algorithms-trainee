@@ -16,8 +16,9 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Build app
-        run: 
-          g++ -std=c++17 src/viterbi_test.cpp src/ConvolutionalCoding.cpp src/ViterbiDecoding.cpp -o main.exe -I include
+        run: |
+          g++ -std=c++17 src/viterbi_test.cpp src/ConvolutionalCoding.cpp src/ViterbiDecoding.cpp -o viterbi_test -I include
+          .\ viterbi_test
 
   build_app:
     name: Build app for all os
