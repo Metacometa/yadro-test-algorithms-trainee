@@ -2,16 +2,15 @@ name: Releaser
 
 on:
   push:
-    branches: ["master"]
+    tags:
+    - "*"
     
 env:
   APP_NAME: viterbi    
-  BRANCH_NAME: ${{ github.head_ref || github.ref_name }} 
-
 
 jobs:
-  build_linux_and_macos:
-    name: Build for all os
+  build_app:
+    name: Build app for all os
 
     strategy:
       matrix:
@@ -24,22 +23,8 @@ jobs:
         
     steps:
       - uses: actions/checkout@v3
-      - name: Test branch name
-        run: |
-          echo ${{env.BRANCH_NAME}}
-          echo " !! "
-          echo ${{github.base_ref}}
-          echo " !! "
-          echo ${{github.ref_name}}
-          echo " !! "
-          echo ${{github.head_ref}}
-          echo "$GITHUB_REF && $GITHUB_BASE_REF && $GITHUB_REF_NAME && $GITHUB_HEAD_REF"
-
-      - name: Exit if not master branch
-        if: contains(${{env.BRANCH_NAME}}, 'master') == false && contains(${{github.ref_name}}, 'v') == false
-        run: exit -1
       
-      - name: Bulding of app 
+      - name: Bulding app 
         run: 
           g++ -std=c++17 src/main.cpp src/ConvolutionalCoding.cpp src/BinarySymmetricChannel.cpp src/ViterbiDecoding.cpp -o ${{env.APP_NAME}}_${{matrix.os}} -I include
 
@@ -53,7 +38,7 @@ jobs:
          retention-days: 4 
          
   make_release:
-    needs: [build_linux_and_macos]
+    needs: [build_app]
     name: Make release
     runs-on: ubuntu-latest
     permissions:
@@ -61,13 +46,17 @@ jobs:
     
     steps:
       - uses: actions/checkout@v3
+      - name: Download artifacts
       - uses: actions/download-artifact@v3
         with:
           name: ${{env.APP_NAME}}_matrix
           
+      - name: Release app
       - uses: ncipollo/release-action@v1
         with:
-          artifacts: "$APP_NAME_matrix"
+          removeArtifacts: true
+          artifacts: "viterbi*"
+          bodyFile: ReleaseNotes.md
     
   
 

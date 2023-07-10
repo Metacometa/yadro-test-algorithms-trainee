@@ -2,11 +2,14 @@ name: CI-CD
 
 on:
   push:
-    branches: ["main", "master"]
+    branches: ["master"]
+    
+env:
+  APP_NAME: viterbi    
 
-jobs:     
-  build_linux_and_macos:
-    name: Build for all os
+jobs:
+  build_app:
+    name: Build app for all os
 
     strategy:
       matrix:
@@ -16,20 +19,22 @@ jobs:
     defaults:
       run:
         shell: bash
-
-    env:
-      APP_NAME: viterbi
-
+        
     steps:
       - uses: actions/checkout@v3
-      - name: Bulding of app 
+      
+      - name: Bulding app 
         run: 
-          g++ src/main.cpp src/ConvolutionalCoding.cpp src/BinarySymmetricChannel.cpp src/ViterbiDecoding.cpp -o APP_NAME_${{matrix.os}} -I include
+          g++ -std=c++17 src/main.cpp src/ConvolutionalCoding.cpp src/BinarySymmetricChannel.cpp src/ViterbiDecoding.cpp -o ${{env.APP_NAME}}_${{matrix.os}} -I include
 
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v3.1.2
         with:
-         name: APP_NAME_matrix
-         path: APP_NAME_${{matrix.os}}.exe
-         retention-days: 4    
+         name: ${{env.APP_NAME}}_matrix
+         path: |
+           ${{env.APP_NAME}}_${{matrix.os}}
+           ${{env.APP_name}}_${{matrix.os}}.exe
+         retention-days: 4 
+         
+  
 
