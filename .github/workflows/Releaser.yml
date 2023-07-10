@@ -26,7 +26,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Exit if not master branch
-        if: endsWith(BRANCH_NAME, 'master') == false
+        if: endsWith(env.BRANCH_NAME, 'master') == false
         run: exit -1
       
       - name: Bulding of app 
