@@ -25,6 +25,9 @@ jobs:
         
     steps:
       - uses: actions/checkout@v3
+        run: 
+          echo env.BRANCH_NAME
+          
       - name: Exit if not master branch
         if: endsWith(env.BRANCH_NAME, 'master') == false
         run: exit -1
