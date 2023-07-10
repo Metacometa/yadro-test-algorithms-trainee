@@ -39,4 +39,6 @@ int main() {
         std::cerr << correct_output_2 << " != " << decoder.decode(input_2) << std::endl;
         abort();
     }
+    
+    std::cout << "No mistakes in test" << std::endl;
 }
