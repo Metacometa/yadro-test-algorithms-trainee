@@ -26,12 +26,12 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Test branch name
-        run: 
+        run: |
           echo ${{env.BRANCH_NAME}}
           echo " !! "
-          echo ${{env.github.base_ref}}
+          echo github.base_ref
           echo " !! "
-          echo $env:GITHUB_REF_NAME
+          echo github_ref_name
 
       - name: Exit if not master branch
         if: endsWith(${{env.BRANCH_NAME}}, 'master') == false
