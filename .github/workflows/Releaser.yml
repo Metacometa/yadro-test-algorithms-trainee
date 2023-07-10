@@ -64,7 +64,6 @@ jobs:
         with:
           name: ${{env.APP_NAME}}_matrix
           
-      - name: Release app
       - uses: ncipollo/release-action@v1
         with:
           removeArtifacts: true
