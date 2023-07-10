@@ -2,7 +2,6 @@ name: Releaser
 
 on:
   push:
-    branches: ["master"]
     tags:
     - "*"
     
@@ -24,6 +23,10 @@ jobs:
         
     steps:
       - uses: actions/checkout@v3
+      - name: Exit if not master branch
+        if: endsWith(github.ref, 'master') == false
+        run: exit -1
+      
       - name: Bulding of app 
         run: 
           g++ -std=c++17 src/main.cpp src/ConvolutionalCoding.cpp src/BinarySymmetricChannel.cpp src/ViterbiDecoding.cpp -o ${{env.APP_NAME}}_${{matrix.os}} -I include
