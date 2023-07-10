@@ -29,7 +29,7 @@ jobs:
         run: 
           echo ${{env.BRANCH_NAME}}
           echo ${{github.base_ref}}
-          echo ${{GITHUB_REF_NAME}}
+          echo GITHUB_REF_NAME
 
       - name: Exit if not master branch
         if: endsWith(${{env.BRANCH_NAME}}, 'master') == false
