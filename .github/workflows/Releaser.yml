@@ -38,7 +38,7 @@ jobs:
           echo "$GITHUB_REF && $GITHUB_BASE_REF && $GITHUB_REF_NAME && $GITHUB_HEAD_REF"
 
       - name: Exit if not master branch
-        if: contains(${{env.BRANCH_NAME}}, 'master') == false && contains(${{github_ref_name}}, 'v') == false
+        if: contains(${{env.BRANCH_NAME}}, 'master') == false && contains(${{github.ref_name}}, 'v') == false
         run: exit -1
       
       - name: Bulding of app 
